@@ -4,28 +4,47 @@ import cors from "cors";
 
 const app = express();
 
-app.use(cors());
-app.use(express.json);
-
-const db = mysql.createPool({
-  host: "www.db4free.net",
-  port: 3306,
-  user: "rfidproject",
-  password: "ee49fd3b",
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password",
   database: "rfidsensor",
-  connectionLimit: 100,
-  multipleStatements: true,
 });
 
-app.post("/", (req, res) => {
+app.use(express.json());
+app.use(cors());
+
+app.get("/", (req, res) => {
   res.json("Backend response!");
 });
 
-app.post("/admins", (req, res) => {
-  const q = "SELECT * FROM admin";
-  db.query(q, (err, data) => {
-    if (err) return res.json(err);
-    return res.json(data);
+// app.get("/admin", (req, res) => {
+//   const q = "SELECT * FROM admin";
+//   db.query(q, (err, data) => {
+//     if (err) return res.json(err);
+//     return res.json(data);
+//   });
+// });
+
+app.post("/login", (req, res) => {
+  const query = "SELECT * FROM admin";
+  db.query(query, (err, data) => {
+    if (err) return res.json("Error");
+    else {
+      data.map((element, index) => {
+        console.log(element);
+        if (
+          element.admin_email == req.body.email &&
+          element.admin_password == req.body.password
+        ) {
+          return res.json("Success");
+        } else if (data.length > index + 1) {
+          return;
+        } else {
+          return res.json("Failed");
+        }
+      });
+    }
   });
 });
 
