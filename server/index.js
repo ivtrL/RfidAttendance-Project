@@ -18,14 +18,6 @@ app.get("/", (req, res) => {
   res.json("Backend response!");
 });
 
-// app.get("/admin", (req, res) => {
-//   const q = "SELECT * FROM admin";
-//   db.query(q, (err, data) => {
-//     if (err) return res.json(err);
-//     return res.json(data);
-//   });
-// });
-
 app.post("/login", (req, res) => {
   const query = "SELECT * FROM admin";
   db.query(query, (err, data) => {
