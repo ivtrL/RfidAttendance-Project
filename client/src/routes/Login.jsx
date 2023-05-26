@@ -1,21 +1,13 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../Auth/Auth";
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
+  const { SignIn } = useContext(AuthContext);
 
-  const navigate = useNavigate();
-
-  async function handleSignIn(data) {
-    console.log(data);
-    await axios.post("http://localhost:8800/login", data).then((res) => {
-      if (res.data === "Success") {
-        navigate("/home");
-      } else {
-        alert("Login Inválido!");
-      }
-    });
+  async function onSubmit(data) {
+    await SignIn(data);
   }
 
   return (
@@ -36,7 +28,7 @@ const Login = () => {
           className="space-y-6"
           action="#"
           method="POST"
-          onSubmit={handleSubmit(handleSignIn)}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div>
             <label

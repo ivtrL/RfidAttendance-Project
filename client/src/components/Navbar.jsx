@@ -3,7 +3,7 @@ import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Menu } from "@mui/material";
 import { Fragment } from "react";
 
-const Navbar = () => {
+const Navbar = ({ Route }) => {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
@@ -11,6 +11,20 @@ const Navbar = () => {
   const navigation = ["Início", "Históricos", "Dispositivos", "Usuários"];
   const profile = ["Your Profile", "Settings"];
   const refs = ["/home", "/logs", "/devices", "/users"];
+
+  function handleRoute() {
+    switch (Route) {
+      case "home":
+        return 0;
+      case "logs":
+        return 1;
+      case "devices":
+        return 2;
+      case "users":
+        return 3;
+    }
+  }
+  const activeRoute = handleRoute();
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -29,7 +43,7 @@ const Navbar = () => {
                 <div className="hidden md:block">
                   <div className="ml-10 flex items-baseline space-x-4">
                     {navigation.map((item, itemIdx) =>
-                      itemIdx === 0 ? (
+                      itemIdx === activeRoute ? (
                         <Fragment key={item}>
                           {/* Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" */}
                           <a

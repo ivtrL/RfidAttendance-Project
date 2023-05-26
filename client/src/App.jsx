@@ -3,45 +3,23 @@ import Devices from "./routes/Devices";
 import Logs from "./routes/Logs";
 import Users from "./routes/Users";
 import Login from "./routes/Login";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import AuthProvider from "./Auth/Auth";
 
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: "*",
-      element: <Navigate to={"/login"} />,
-    },
-    {
-      path: "/",
-      element: <Navigate to={"/login"} />,
-    },
-    {
-      path: "/home",
-      element: <Home />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/users",
-      element: <Users />,
-    },
-    {
-      path: "/logs",
-      element: <Logs />,
-    },
-    {
-      path: "/devices",
-      element: <Devices />,
-    },
-  ]);
-
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <Routes>
+        <Route path="*" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/devices" element={<Devices />} />
+        <Route path="/logs" element={<Logs />} />
+        <Route path="/users" element={<Users />} />
+      </Routes>
+    </AuthProvider>
+  );
 };
 
 export default App;
