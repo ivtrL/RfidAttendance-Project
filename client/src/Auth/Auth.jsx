@@ -10,8 +10,10 @@ function AuthProvider({ children }) {
 
   const navigate = useNavigate();
 
+  if (!isAuthenticated) navigate("/");
+
   async function SignIn({ email, password }) {
-    const response = await axios.post("http://localhost:8800/login", {
+    const response = await axios.post("http://localhost:3333/login", {
       email,
       password,
     });
@@ -23,8 +25,31 @@ function AuthProvider({ children }) {
     }
   }
 
+  async function SignOut() {
+    setAdmin(null);
+    navigate("/");
+  }
+
+  async function CreateUser({ username, email, gender }) {
+    const response = await axios.post("http://localhost:3333/create_user", {
+      username,
+      email,
+      gender,
+    });
+    if (response.data.status === "Success") return response.data.users;
+    else return response.data.status;
+  }
+
+  async function UserList() {
+    const response = await axios.get("http://localhost:3333/users");
+    if (response.data.status === "Success") return response.data.users;
+    else return response.data.status;
+  }
+
   return (
-    <AuthContext.Provider value={{ admin, isAuthenticated, SignIn }}>
+    <AuthContext.Provider
+      value={{ admin, isAuthenticated, SignIn, UserList, CreateUser, SignOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,11 +1,19 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Menu } from "@mui/material";
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
+
+import { AuthContext } from "../Auth/Auth";
 
 const Navbar = ({ Route }) => {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
+  }
+
+  const { SignOut } = useContext(AuthContext);
+
+  async function handleSignOut() {
+    await SignOut();
   }
 
   const navigation = ["Início", "Históricos", "Dispositivos", "Usuários"];
@@ -120,6 +128,7 @@ const Navbar = ({ Route }) => {
                               <a
                                 href="#"
                                 className="block px-4 py-2 text-sm text-gray-700"
+                                onClick={handleSignOut}
                               >
                                 Sign out
                               </a>
