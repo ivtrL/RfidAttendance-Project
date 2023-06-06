@@ -13,7 +13,7 @@ const Navbar = ({ Route }) => {
   const { SignOut } = useContext(AuthContext);
 
   async function handleSignOut() {
-    await SignOut();
+    SignOut();
   }
 
   const navigation = ["Início", "Históricos", "Dispositivos", "Usuários"];

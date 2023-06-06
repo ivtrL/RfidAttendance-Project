@@ -5,7 +5,7 @@ import axios from "axios";
 export const AuthContext = createContext({});
 
 function AuthProvider({ children }) {
-  const [admin, setAdmin] = useState({} | null);
+  const [admin, setAdmin] = useState(null);
   const isAuthenticated = !!admin;
 
   const navigate = useNavigate();
@@ -40,15 +40,22 @@ function AuthProvider({ children }) {
     else return response.data.status;
   }
 
-  async function UserList() {
+  async function getUserList() {
     const response = await axios.get("http://localhost:3333/users");
     if (response.data.status === "Success") return response.data.users;
-    else return response.data.status;
+    else return response.data;
   }
 
   return (
     <AuthContext.Provider
-      value={{ admin, isAuthenticated, SignIn, UserList, CreateUser, SignOut }}
+      value={{
+        admin,
+        isAuthenticated,
+        SignIn,
+        getUserList,
+        CreateUser,
+        SignOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

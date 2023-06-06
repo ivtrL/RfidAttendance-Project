@@ -1,12 +1,19 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Navbar from "../components/Navbar";
 
 import { AuthContext } from "../Auth/Auth";
+import Navbar from "../components/Navbar";
+import Sheet from "../components/Sheet";
 
 const Users = () => {
   const { register, handleSubmit } = useForm();
-  const { CreateUser } = useContext(AuthContext);
+  const { CreateUser, getUserList } = useContext(AuthContext);
+  const [userList, setUserList] = useState([]);
+
+  async function handleUserList() {
+    const users = getUserList();
+    setUserList([users]);
+  }
 
   async function onSubmit(data) {
     await CreateUser(data);
@@ -102,11 +109,7 @@ const Users = () => {
               </button>
             </div>
           </form>
-          {/* Replace with your content */}
-          <div className="px-4 py-6 sm:px-0">
-            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
-          </div>
-          {/* /End replace */}
+          <div>{userList.length > 0 ? <Sheet List={userList} /> : <></>}</div>
         </div>
       </main>
     </div>
