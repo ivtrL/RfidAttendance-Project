@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../Auth/Auth";
@@ -7,12 +7,12 @@ import Sheet from "../components/Sheet";
 
 const Users = () => {
   const { register, handleSubmit } = useForm();
-  const { CreateUser, getUserList } = useContext(AuthContext);
-  const [userList, setUserList] = useState([]);
+  const { CreateUser, userList, getUserList } = useContext(AuthContext);
+
+  useEffect(() => handleUserList, []);
 
   async function handleUserList() {
-    const users = getUserList();
-    setUserList([users]);
+    await getUserList();
   }
 
   async function onSubmit(data) {

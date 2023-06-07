@@ -1,16 +1,19 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const AuthContext = createContext({});
 
 function AuthProvider({ children }) {
-  const [admin, setAdmin] = useState(null);
+  const [admin, setAdmin] = useState(false);
   const isAuthenticated = !!admin;
+  const [userList, setUserList] = useState([]);
 
   const navigate = useNavigate();
 
-  if (!isAuthenticated) navigate("/");
+  // useEffect(() => {
+  //   if (!isAuthenticated) navigate("/");
+  // }, []);
 
   async function SignIn({ email, password }) {
     const response = await axios.post("http://localhost:3333/login", {
@@ -29,21 +32,20 @@ function AuthProvider({ children }) {
     setAdmin(null);
     navigate("/");
   }
-
   async function CreateUser({ username, email, gender }) {
     const response = await axios.post("http://localhost:3333/create_user", {
       username,
       email,
       gender,
     });
-    if (response.data.status === "Success") return response.data.users;
-    else return response.data.status;
+    if (response.data.status === "Success") setUserList(response.data.users);
+    else console.log(response.data.status);
   }
 
   async function getUserList() {
     const response = await axios.get("http://localhost:3333/users");
-    if (response.data.status === "Success") return response.data.users;
-    else return response.data;
+    if (response.data.status === "Success") setUserList(response.data.users);
+    else console.log(response.data);
   }
 
   return (
@@ -51,6 +53,7 @@ function AuthProvider({ children }) {
       value={{
         admin,
         isAuthenticated,
+        userList,
         SignIn,
         getUserList,
         CreateUser,

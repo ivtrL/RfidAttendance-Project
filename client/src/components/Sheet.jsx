@@ -1,5 +1,4 @@
 const Sheet = ({ List }) => {
-  console.log(Object.keys(List[0]));
   const keysList = Object.keys(List[0]);
   const valueMatrix = [];
   List.map((object) => {
@@ -8,13 +7,17 @@ const Sheet = ({ List }) => {
 
   return (
     <div>
-      {keysList.map((element) => {
-        <div>{element}</div>;
-      })}
+      <div>
+        {keysList.map((element) => {
+          <div>{element}</div>;
+        })}
+      </div>
       {valueMatrix.map((valueArray) => {
-        valueArray.map((value) => {
-          <div>{value}</div>;
-        });
+        <div>
+          {valueArray.map((value) => {
+            <div>{value}</div>;
+          })}
+        </div>;
       })}
     </div>
   );
