@@ -109,7 +109,7 @@ const Users = () => {
               </button>
             </div>
           </form>
-          <div>{userList.length > 0 ? <Sheet List={userList} /> : <></>}</div>
+          {userList.length > 0 ? <Sheet List={userList} /> : <></>}
         </div>
       </main>
     </div>
