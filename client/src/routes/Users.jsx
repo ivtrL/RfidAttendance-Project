@@ -8,6 +8,15 @@ import Sheet from "../components/Sheet";
 const Users = () => {
   const { register, handleSubmit } = useForm();
   const { CreateUser, userList, getUserList } = useContext(AuthContext);
+  const keysList = [
+    "Índice",
+    "Nome",
+    "Gênero",
+    "Email",
+    "ID do Cartão",
+    "Data de Adição",
+    "Adicionar Cartão",
+  ];
 
   useEffect(() => handleUserList, []);
 
@@ -24,14 +33,14 @@ const Users = () => {
       <Navbar Route="users" />
 
       <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900">Usuários</h1>
         </div>
       </header>
       <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex">
+        <div className="max-w-screen-2xl mx-auto py-6 sm:px-2 flex">
           <form
-            className="space-y-6"
+            className="w-2/5 max-w-md mx-auto space-y-6"
             action="#"
             method="POST"
             onSubmit={handleSubmit(onSubmit)}
@@ -109,7 +118,29 @@ const Users = () => {
               </button>
             </div>
           </form>
-          {userList.length > 0 ? <Sheet List={userList} /> : <></>}
+          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 m-4">
+            {userList.length > 0 ? (
+              <Sheet List={userList} Keys={keysList} />
+            ) : (
+              <div
+                className={`keys grid`}
+                style={{
+                  gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
+                }}
+              >
+                {keysList.map((element, index) => {
+                  return (
+                    <div
+                      className="flex justify-center items-center"
+                      key={index + 1}
+                    >
+                      {element}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

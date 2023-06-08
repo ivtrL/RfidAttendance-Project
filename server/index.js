@@ -1,6 +1,7 @@
 import express from "express";
 import mysql from "mysql";
 import cors from "cors";
+import { v4 as uuid } from "uuid";
 
 const app = express();
 
@@ -93,7 +94,7 @@ app.post("/login", (req, res) => {
 //   });
 // });
 
-// app.post("/create_user", (req, res) => {
+// app.post("/users/create", (req, res) => {
 //   const date = new Date();
 //   const query =
 //     "INSERT INTO users (username, gender, email, user_date) VALUES (?,?,?,?)";
@@ -124,38 +125,39 @@ const date = new Date();
 
 var usersList = [
   {
+    id: 1,
     username: "Isaac",
-    card_uid: null,
+    gender: "Male",
     email: "isaac123@gmail.com",
+    card_uid: null,
     user_date: `${date.toUTCString()}`,
-    gender: "Male",
     add_card: 1,
   },
   {
+    id: 2,
     username: "Pedro",
-    card_uid: null,
-    email: "Pedro@gmail.com",
-    user_date: `${date.toUTCString()}`,
     gender: "Male",
+    email: "Pedro@gmail.com",
+    card_uid: null,
+    user_date: `${date.toUTCString()}`,
     add_card: 1,
   },
   {
+    id: 3,
     username: "Priscila",
-    card_uid: null,
-    email: "priscila@gmail.com",
-    user_date: `${date.toUTCString()}`,
     gender: "Female",
+    email: "priscila@gmail.com",
+    card_uid: null,
+    user_date: `${date.toUTCString()}`,
     add_card: 1,
   },
 ];
-
-// var logsList = [];
 
 app.get("/users", (req, res) => {
   return res.json({ status: "Success", users: usersList });
 });
 
-app.post("/create_user", (req, res) => {
+app.post("/users/create", (req, res) => {
   const newUserDate = new Date();
   usersList.push({
     username: req.body.username,
@@ -168,8 +170,34 @@ app.post("/create_user", (req, res) => {
   return res.json({ status: "Success", users: usersList });
 });
 
+var logsList = [];
+
 app.get("/logs", (req, res) => {
   return res.json({ status: "Success", logs: logsList });
+});
+
+var devicesList = [];
+
+app.get("/devices", (req, res) => {
+  return res.json({ status: "Success", devices: devicesList });
+});
+
+app.post("/devices/create", (req, res) => {
+  const newDate = new Date();
+  devicesList.push({
+    id: devicesList.length + 1,
+    device_name: req.body.username,
+    device_uid: uuid(),
+    device_date: `${newDate.toUTCString()}`,
+  });
+  return res.json({ status: "Success", devices: devicesList });
+});
+
+app.post("/devices/remove", (req, res) => {
+  devicesList = devicesList.filter((element) => {
+    return element.device_uid != req.body.uuid;
+  });
+  return res.json({ status: "Success", devices: devicesList });
 });
 
 app.listen(3333, () => {
