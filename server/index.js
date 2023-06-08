@@ -66,18 +66,20 @@ var adminList = [
 ];
 
 app.post("/login", (req, res) => {
+  let loginValid = false;
   adminList.map((element, index) => {
-    if (
-      element.admin_email == req.body.email &&
-      element.admin_password == req.body.password
-    ) {
-      return res.json({ status: "Success", admin: element });
-    } else if (adminList.length > index + 1) {
-      return;
-    } else {
-      if (element.admin_email == req.body.email)
-        return res.json({ status: "Senha inválida!" });
-      else return res.json({ status: "Email não existe no banco de dados!" });
+    if (!loginValid) {
+      if (
+        element.admin_email == req.body.email &&
+        element.admin_password == req.body.password
+      ) {
+        loginValid = true;
+        return res.json({ status: "Success", admin: element });
+      } else if (adminList.length > index + 1) {
+        return;
+      } else {
+        return res.json({ status: "Login Falhou!" });
+      }
     }
   });
 });
