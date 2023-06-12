@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 import { AuthContext } from "../Auth/Auth";
 import Navbar from "../components/Navbar";
@@ -16,11 +16,11 @@ const Logs = () => {
     "Tempo de Saída",
   ];
 
-  useEffect(() => handleLogsList, []);
-
   async function handleLogsList() {
-    await getLogsList();
+    if (typeof getLogsList === "function") await getLogsList();
   }
+
+  handleLogsList;
 
   return (
     <div>
@@ -36,26 +36,30 @@ const Logs = () => {
           {/* Replace with your content */}
           <div className="px-4 py-6 sm:px-0">
             <div className="border-4 border-dashed border-gray-200 rounded-lg h-96">
-              {logsList.length > 0 ? (
-                <Sheet List={logsList} Keys={keysList} />
+              {Array.isArray(logsList) ? (
+                logsList.length > 0 ? (
+                  <Sheet List={logsList} Keys={keysList} />
+                ) : (
+                  <div
+                    className={`keys grid`}
+                    style={{
+                      gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
+                    }}
+                  >
+                    {keysList.map((element, index) => {
+                      return (
+                        <div
+                          className="flex justify-center items-center"
+                          key={index + 1}
+                        >
+                          {element}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
               ) : (
-                <div
-                  className={`keys grid`}
-                  style={{
-                    gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
-                  }}
-                >
-                  {keysList.map((element, index) => {
-                    return (
-                      <div
-                        className="flex justify-center items-center"
-                        key={index + 1}
-                      >
-                        {element}
-                      </div>
-                    );
-                  })}
-                </div>
+                <></>
               )}
             </div>
           </div>

@@ -1,24 +1,25 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 
 import Navbar from "../components/Navbar";
 import Sheet from "../components/Sheet";
 import { AuthContext } from "../Auth/Auth";
+import { DeviceAdding } from "../types";
 
 const Devices = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<DeviceAdding>();
   const { devicesList, getDevicesList, addDeviceToList } =
     useContext(AuthContext);
   const keysList = ["Índice", "Nome", "ID do Dispositivo", "Data de Adição"];
 
-  useEffect(() => handleDevicesList, []);
-
   async function handleDevicesList() {
-    await getDevicesList();
+    if (typeof getDevicesList === "function") await getDevicesList();
   }
 
-  async function onSubmit(data) {
-    await addDeviceToList(data);
+  handleDevicesList;
+
+  async function onSubmit(data: DeviceAdding) {
+    if (typeof addDeviceToList === "function") await addDeviceToList(data);
   }
 
   return (
@@ -70,28 +71,36 @@ const Devices = () => {
           {/* Replace with your content */}
           <div className="w-4/5 px-0 py-6 sm:px-4">
             <div className="border-4 border-dashed border-gray-200 rounded-lg h-96">
-              {devicesList.length > 0 ? (
-                <Sheet List={devicesList} Keys={keysList} RemoveButton={true} />
+              {Array.isArray(devicesList) ? (
+                devicesList.length > 0 ? (
+                  <Sheet
+                    List={devicesList}
+                    Keys={keysList}
+                    RemoveButton={true}
+                  />
+                ) : (
+                  <div
+                    className={`keys grid`}
+                    style={{
+                      gridTemplateColumns: `repeat(${
+                        keysList.length + 1
+                      }, minmax(0, 1fr))`,
+                    }}
+                  >
+                    {keysList.map((element, index) => {
+                      return (
+                        <div
+                          className="flex justify-center items-center"
+                          key={index + 1}
+                        >
+                          {element}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
               ) : (
-                <div
-                  className={`keys grid`}
-                  style={{
-                    gridTemplateColumns: `repeat(${
-                      keysList.length + 1
-                    }, minmax(0, 1fr))`,
-                  }}
-                >
-                  {keysList.map((element, index) => {
-                    return (
-                      <div
-                        className="flex justify-center items-center"
-                        key={index + 1}
-                      >
-                        {element}
-                      </div>
-                    );
-                  })}
-                </div>
+                <></>
               )}
             </div>
           </div>

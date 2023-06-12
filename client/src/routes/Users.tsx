@@ -1,9 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../Auth/Auth";
 import Navbar from "../components/Navbar";
 import Sheet from "../components/Sheet";
+import { User } from "../types";
 
 const Users = () => {
   const { register, handleSubmit } = useForm();
@@ -18,14 +19,14 @@ const Users = () => {
     "Adicionar Cartão",
   ];
 
-  useEffect(() => handleUserList, []);
-
   async function handleUserList() {
-    await getUserList();
+    if (typeof getUserList === "function") await getUserList();
   }
 
-  async function onSubmit(data) {
-    await CreateUser(data);
+  handleUserList;
+
+  async function onSubmit(data: User) {
+    if (typeof CreateUser === "function") await CreateUser(data);
   }
 
   return (
@@ -119,26 +120,30 @@ const Users = () => {
             </div>
           </form>
           <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 m-4">
-            {userList.length > 0 ? (
-              <Sheet List={userList} Keys={keysList} />
+            {Array.isArray(userList) ? (
+              userList.length > 0 ? (
+                <Sheet List={userList} Keys={keysList} />
+              ) : (
+                <div
+                  className={`keys grid`}
+                  style={{
+                    gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {keysList.map((element, index) => {
+                    return (
+                      <div
+                        className="flex justify-center items-center"
+                        key={index + 1}
+                      >
+                        {element}
+                      </div>
+                    );
+                  })}
+                </div>
+              )
             ) : (
-              <div
-                className={`keys grid`}
-                style={{
-                  gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
-                }}
-              >
-                {keysList.map((element, index) => {
-                  return (
-                    <div
-                      className="flex justify-center items-center"
-                      key={index + 1}
-                    >
-                      {element}
-                    </div>
-                  );
-                })}
-              </div>
+              <></>
             )}
           </div>
         </div>
