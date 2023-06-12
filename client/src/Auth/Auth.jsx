@@ -13,9 +13,9 @@ function AuthProvider({ children }) {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isAuthenticated) navigate("/");
-  }, []);
+  // useEffect(() => {
+  //   if (!isAuthenticated) navigate("/");
+  // }, []);
 
   async function SignIn({ email, password }) {
     const response = await axios.post("http://localhost:3333/login", {

@@ -51,10 +51,10 @@ DROP TABLE IF EXISTS `devices`;
 CREATE TABLE `devices` (
   `id` int NOT NULL AUTO_INCREMENT,
   `device_name` varchar(50) NOT NULL,
-  `device_dep` varchar(20) NOT NULL,
+  -- `device_dep` varchar(20) NOT NULL,
   `device_uid` text NOT NULL,
   `device_date` date NOT NULL,
-  `device_mode` tinyint(1) NOT NULL DEFAULT '0',
+  -- `device_mode` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -78,14 +78,14 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(30) NOT NULL DEFAULT 'None',
-  `serialnumber` double NOT NULL DEFAULT '0',
+  -- `serialnumber` double NOT NULL DEFAULT '0',
   `gender` varchar(10) NOT NULL DEFAULT 'None',
   `email` varchar(50) NOT NULL DEFAULT 'None',
   `card_uid` varchar(30) NOT NULL,
-  `card_select` tinyint(1) NOT NULL DEFAULT '0',
+  -- `card_select` tinyint(1) NOT NULL DEFAULT '0',
   `user_date` date NOT NULL,
-  `device_uid` varchar(20) NOT NULL DEFAULT '0',
-  `device_dep` varchar(20) NOT NULL DEFAULT '0',
+  -- `device_uid` varchar(20) NOT NULL DEFAULT '0',
+  -- `device_dep` varchar(20) NOT NULL DEFAULT '0',
   `add_card` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -110,14 +110,14 @@ DROP TABLE IF EXISTS `users_logs`;
 CREATE TABLE `users_logs` (
   `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
-  `serialnumber` double NOT NULL,
+  -- `serialnumber` double NOT NULL,
   `card_uid` varchar(30) NOT NULL,
   `device_uid` varchar(20) NOT NULL,
-  `device_dep` varchar(20) NOT NULL,
+  -- `device_dep` varchar(20) NOT NULL,
   `checkindate` date NOT NULL,
   `timein` time NOT NULL,
   `timeout` time NOT NULL,
-  `card_out` tinyint(1) NOT NULL DEFAULT '0',
+  -- `card_out` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
