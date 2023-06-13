@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../Auth/Auth";
@@ -23,7 +23,9 @@ const Users = () => {
     if (typeof getUserList === "function") await getUserList();
   }
 
-  handleUserList;
+  useEffect(() => {
+    handleUserList();
+  }, []);
 
   async function onSubmit(data: User) {
     if (typeof CreateUser === "function") await CreateUser(data);
@@ -98,15 +100,15 @@ const Users = () => {
                 </label>
               </div>
               <div className="mt-2">
-                <input
+                <select
                   {...register("gender")}
                   id="gender"
-                  name="gender"
-                  type="gender"
-                  autoComplete="gender"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 bg-gray-100 text-gray-900 shadow-sm ring-1 ring-inset ring-[#2d3340] placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+                >
+                  <option value="Masculino">Masculino</option>
+                  <option value="Feminino">Feminino</option>
+                  <option value="Outro">Outro</option>
+                </select>
               </div>
             </div>
 

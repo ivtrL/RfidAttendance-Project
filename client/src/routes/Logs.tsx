@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import { AuthContext } from "../Auth/Auth";
 import Navbar from "../components/Navbar";
@@ -19,8 +19,9 @@ const Logs = () => {
   async function handleLogsList() {
     if (typeof getLogsList === "function") await getLogsList();
   }
-
-  handleLogsList;
+  useEffect(() => {
+    handleLogsList();
+  }, []);
 
   return (
     <div>

@@ -2,14 +2,14 @@ import React, { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import { Device, Login, User, UserLog } from "../types";
+import { Admin, Device, Login, User, UserLog } from "../types";
 
 interface AuthContext {
-  admin?: boolean | object;
+  admin?: boolean | Admin;
   isAuthenticated?: boolean;
-  userList?: object[];
-  logsList?: object[];
-  devicesList?: object[];
+  userList?: User[];
+  logsList?: UserLog[];
+  devicesList?: Device[];
   SignIn?: (props: Login) => Promise<void>;
   getUserList?: () => Promise<void>;
   getLogsList?: () => Promise<void>;
@@ -23,7 +23,7 @@ interface AuthContext {
 export const AuthContext = createContext<AuthContext>({});
 
 function AuthProvider({ children }: React.PropsWithChildren) {
-  const [admin, setAdmin] = useState<boolean | object>(false);
+  const [admin, setAdmin] = useState<boolean | Admin>(false);
   const isAuthenticated = !!admin;
   const [userList, setUserList] = useState<User[]>([]);
   const [logsList, setLogsList] = useState<UserLog[]>([]);

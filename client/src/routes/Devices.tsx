@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import Navbar from "../components/Navbar";
@@ -15,8 +15,9 @@ const Devices = () => {
   async function handleDevicesList() {
     if (typeof getDevicesList === "function") await getDevicesList();
   }
-
-  handleDevicesList;
+  useEffect(() => {
+    handleDevicesList();
+  }, []);
 
   async function onSubmit(data: DeviceAdding) {
     if (typeof addDeviceToList === "function") await addDeviceToList(data);
