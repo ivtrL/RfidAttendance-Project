@@ -2,7 +2,7 @@
 A project built for ESP32 linked with MySQL to make an smart attendance system.
 
 <h1 align="center">  
-    <img src="https://media.discordapp.net/attachments/714891795129171983/1116080894567006248/Screenshot_2023-06-07_at_16.05.48.png?width=799&height=480" alt="Descrição da imagem" style="margin-top: 32px; display:block; margin: auto" >
+    <img src="https://media.discordapp.net/attachments/839669500747186186/1118301018371924138/image.png?width=1380&height=671" alt="Descrição da imagem" style="margin-top: 32px; display:block; margin: auto" >
 </h1>
 
 
