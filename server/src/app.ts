@@ -288,14 +288,65 @@ app.listen(process.env.APP_PORT, () => {
 
 app.post("/logs/create", (req, res) => {
   const newDate = new Date();
-  logsList.push({
-    id: logsList.length + 1,
-    username: req.body.username,
-    card_uid: req.body.card_uid,
-    device_uid: req.body.device_uid,
-    checkindate: `${newDate.toUTCString()}`,
-    timein: req.body.timein,
-    timeout: req.body.timeout,
-  });
-  return res.json({ status: "Success", logs: logsList });
+  if (logsList.length > 0) {
+    logsList.map((log, index) => {
+      usersList.map((user) => {
+        devicesList.map((device) => {
+          if (
+            user.username === req.body.username &&
+            device.device_uid === req.body.device_uid
+          ) {
+            if (
+              log.username === req.body.username &&
+              log.device_uid === req.body.device_uid
+            ) {
+              if (log.timeout === "None") {
+                log.timeout = `${newDate.toUTCString()}`;
+                return res.json({ status: "Success", logs: logsList });
+              }
+            } else if (logsList.length > index + 1) {
+              return;
+            } else {
+              logsList.push({
+                id: logsList.length + 1,
+                username: req.body.username,
+                card_uid: "None",
+                device_uid: req.body.device_uid,
+                checkindate: `${newDate.toUTCString()}`,
+                timein: `${newDate.toUTCString()}`,
+                timeout: "None",
+              });
+              return res.json({ status: "Success", logs: logsList });
+            }
+          } else if (logsList.length > index + 1) {
+            return;
+          } else {
+            logsList.push({
+              id: logsList.length + 1,
+              username: req.body.username,
+              card_uid: "None",
+              device_uid: req.body.device_uid,
+              checkindate: `${newDate.toUTCString()}`,
+              timein: `${newDate.toUTCString()}`,
+              timeout: "None",
+            });
+            return res.json({ status: "Success", logs: logsList });
+          }
+        });
+      });
+    });
+  } else {
+    console.log(req.body);
+    logsList.push({
+      id: logsList.length + 1,
+      username: req.body.username,
+      card_uid: "None",
+      device_uid: req.body.device_uid,
+      checkindate: `${newDate.toUTCString()}`,
+      timein: `${newDate.toUTCString()}`,
+      timeout: "None",
+    });
+    console.log(logsList);
+    return res.json({ status: "Success", logs: logsList });
+  }
 });

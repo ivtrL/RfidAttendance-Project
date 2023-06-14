@@ -18,7 +18,7 @@ export interface User {
 export interface UserLog {
   id: number;
   username: string;
-  card_uid?: string;
+  card_uid: string;
   device_uid: string;
   checkindate: string;
   timein: string;

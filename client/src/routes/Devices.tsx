@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import Navbar from "../components/Navbar";
@@ -17,6 +17,7 @@ const Devices = () => {
   }
   useEffect(() => {
     handleDevicesList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function onSubmit(data: DeviceAdding) {

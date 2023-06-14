@@ -1,4 +1,3 @@
-import React from "react";
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -26,6 +25,7 @@ const Users = () => {
 
   useEffect(() => {
     handleUserList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function onSubmit(data: User) {
