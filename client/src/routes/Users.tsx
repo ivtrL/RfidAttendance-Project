@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { AuthContext } from "../Auth/Auth";
 import Navbar from "../components/Navbar";
 import Sheet from "../components/Sheet";
+import { User } from "../types";
 
 const Users = () => {
   const { register, handleSubmit } = useForm();
@@ -18,14 +19,16 @@ const Users = () => {
     "Adicionar Cartão",
   ];
 
-  useEffect(() => handleUserList, []);
-
   async function handleUserList() {
-    await getUserList();
+    if (typeof getUserList === "function") await getUserList();
   }
 
-  async function onSubmit(data) {
-    await CreateUser(data);
+  useEffect(() => {
+    handleUserList();
+  }, []);
+
+  async function onSubmit(data: User) {
+    if (typeof CreateUser === "function") await CreateUser(data);
   }
 
   return (
@@ -97,15 +100,15 @@ const Users = () => {
                 </label>
               </div>
               <div className="mt-2">
-                <input
+                <select
                   {...register("gender")}
                   id="gender"
-                  name="gender"
-                  type="gender"
-                  autoComplete="gender"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 px-2 bg-gray-100 text-gray-900 shadow-sm ring-1 ring-inset ring-[#2d3340] placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
+                >
+                  <option value="Masculino">Masculino</option>
+                  <option value="Feminino">Feminino</option>
+                  <option value="Outro">Outro</option>
+                </select>
               </div>
             </div>
 
@@ -119,26 +122,30 @@ const Users = () => {
             </div>
           </form>
           <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 m-4">
-            {userList.length > 0 ? (
-              <Sheet List={userList} Keys={keysList} />
+            {Array.isArray(userList) ? (
+              userList.length > 0 ? (
+                <Sheet List={userList} Keys={keysList} />
+              ) : (
+                <div
+                  className={`keys grid`}
+                  style={{
+                    gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
+                  }}
+                >
+                  {keysList.map((element, index) => {
+                    return (
+                      <div
+                        className="flex justify-center items-center"
+                        key={index + 1}
+                      >
+                        {element}
+                      </div>
+                    );
+                  })}
+                </div>
+              )
             ) : (
-              <div
-                className={`keys grid`}
-                style={{
-                  gridTemplateColumns: `repeat(${keysList.length}, minmax(0, 1fr))`,
-                }}
-              >
-                {keysList.map((element, index) => {
-                  return (
-                    <div
-                      className="flex justify-center items-center"
-                      key={index + 1}
-                    >
-                      {element}
-                    </div>
-                  );
-                })}
-              </div>
+              <></>
             )}
           </div>
         </div>

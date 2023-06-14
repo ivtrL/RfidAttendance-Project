@@ -3,19 +3,21 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import IconButton from "@mui/material/IconButton";
 
 import { AuthContext } from "../Auth/Auth";
+import { SheetProps } from "../types";
 
-const Sheet = ({ List, Keys, RemoveButton = false }) => {
+const Sheet = ({ List, Keys, RemoveButton = false }: SheetProps) => {
   const { removeDeviceFromList } = useContext(AuthContext);
-  const valueMatrix = [];
+  const valueMatrix: Array<Array<number | string>> = [];
 
   List.map((object) => {
-    const values = Object.values(object);
+    const values: Array<number | string> = Object.values(object);
     if (RemoveButton) values.push("Remove");
     valueMatrix.push(values);
   });
 
-  async function handleRemove(data) {
-    await removeDeviceFromList(data);
+  async function handleRemove(data: { uuid: string }) {
+    if (typeof removeDeviceFromList === "function")
+      await removeDeviceFromList(data);
   }
 
   return (
@@ -54,7 +56,11 @@ const Sheet = ({ List, Keys, RemoveButton = false }) => {
                       <div className="flex justify-center items-center">
                         <IconButton
                           key={idx + 1}
-                          onClick={() => handleRemove({ uuid: valueArray[2] })}
+                          onClick={() => {
+                            const uuid = valueArray[2];
+                            if (typeof uuid === "string")
+                              handleRemove({ uuid });
+                          }}
                         >
                           <DeleteOutlineIcon />
                         </IconButton>

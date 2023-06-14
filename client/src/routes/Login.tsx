@@ -2,13 +2,14 @@ import { useContext } from "react";
 import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../Auth/Auth";
+import { Login as LoginType } from "../types";
 
 const Login = () => {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm<LoginType>();
   const { SignIn } = useContext(AuthContext);
 
-  async function onSubmit(data) {
-    await SignIn(data);
+  async function onSubmit(data: LoginType) {
+    if (typeof SignIn === "function") await SignIn(data);
   }
 
   return (

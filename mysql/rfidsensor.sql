@@ -53,7 +53,7 @@ CREATE TABLE `devices` (
   `device_name` varchar(50) NOT NULL,
   -- `device_dep` varchar(20) NOT NULL,
   `device_uid` text NOT NULL,
-  `device_date` date NOT NULL,
+  `device_date` DATETIME NOT NULL,
   -- `device_mode` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -83,7 +83,7 @@ CREATE TABLE `users` (
   `email` varchar(50) NOT NULL DEFAULT 'None',
   `card_uid` varchar(30) NOT NULL,
   -- `card_select` tinyint(1) NOT NULL DEFAULT '0',
-  `user_date` date NOT NULL,
+  `user_date` DATETIME NOT NULL,
   -- `device_uid` varchar(20) NOT NULL DEFAULT '0',
   -- `device_dep` varchar(20) NOT NULL DEFAULT '0',
   `add_card` tinyint(1) NOT NULL DEFAULT '0',
@@ -114,7 +114,7 @@ CREATE TABLE `users_logs` (
   `card_uid` varchar(30) NOT NULL,
   `device_uid` varchar(20) NOT NULL,
   -- `device_dep` varchar(20) NOT NULL,
-  `checkindate` date NOT NULL,
+  `checkindate` DATETIME NOT NULL,
   `timein` time NOT NULL,
   `timeout` time NOT NULL,
   -- `card_out` tinyint(1) NOT NULL DEFAULT '0',

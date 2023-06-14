@@ -1,23 +1,42 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export const AuthContext = createContext({});
+import { Admin, Device, Login, User, UserLog } from "../types";
 
-function AuthProvider({ children }) {
-  const [admin, setAdmin] = useState(false);
+interface AuthContext {
+  admin?: boolean | Admin;
+  isAuthenticated?: boolean;
+  userList?: User[];
+  logsList?: UserLog[];
+  devicesList?: Device[];
+  SignIn?: (props: Login) => Promise<void>;
+  getUserList?: () => Promise<void>;
+  getLogsList?: () => Promise<void>;
+  getDevicesList?: () => Promise<void>;
+  addDeviceToList?: (props: { username: string }) => Promise<void>;
+  removeDeviceFromList?: (props: { uuid: string }) => Promise<void>;
+  CreateUser?: (props: User) => Promise<void>;
+  SignOut?: () => Promise<void>;
+  createLogs?: (props: UserLog) => Promise<void>;
+}
+
+export const AuthContext = createContext<AuthContext>({});
+
+function AuthProvider({ children }: React.PropsWithChildren) {
+  const [admin, setAdmin] = useState<boolean | Admin>(false);
   const isAuthenticated = !!admin;
-  const [userList, setUserList] = useState([]);
-  const [logsList, setLogsList] = useState([]);
-  const [devicesList, setDevicesList] = useState([]);
+  const [userList, setUserList] = useState<User[]>([]);
+  const [logsList, setLogsList] = useState<UserLog[]>([]);
+  const [devicesList, setDevicesList] = useState<Device[]>([]);
 
   const navigate = useNavigate();
 
   // useEffect(() => {
   //   if (!isAuthenticated) navigate("/");
-  // }, []);
+  // }, [isAuthenticated, navigate]);
 
-  async function SignIn({ email, password }) {
+  async function SignIn({ email, password }: Login) {
     const response = await axios.post("http://localhost:3333/login", {
       email,
       password,
@@ -31,10 +50,10 @@ function AuthProvider({ children }) {
   }
 
   async function SignOut() {
-    setAdmin(null);
+    setAdmin(false);
     navigate("/");
   }
-  async function CreateUser({ username, email, gender }) {
+  async function CreateUser({ username, email, gender }: User) {
     const response = await axios.post("http://localhost:3333/users/create", {
       username,
       email,
@@ -63,7 +82,7 @@ function AuthProvider({ children }) {
     else console.log(response.data);
   }
 
-  async function addDeviceToList({ username }) {
+  async function addDeviceToList({ username }: { username: string }) {
     const response = await axios.post("http://localhost:3333/devices/create", {
       username,
     });
@@ -72,14 +91,23 @@ function AuthProvider({ children }) {
     else console.log(response.data);
   }
 
-  async function removeDeviceFromList({ uuid }) {
-    const response = await axios.post(
-      "http://localhost:3333/devices/remove",
-      uuid
-    );
+  async function removeDeviceFromList({ uuid }: { uuid: string }) {
+    const response = await axios.post("http://localhost:3333/devices/remove", {
+      uuid,
+    });
     if (response.data.status === "Success")
       setDevicesList(response.data.devices);
     else console.log(response.data);
+  }
+
+  // FOR TESTING WITHOUT DATABASE AND ARDUINO CONNECTION
+
+  async function createLogs(data: UserLog) {
+    const response = await axios.post(
+      "http://localhost:3333/logs/create",
+      data
+    );
+    if (response.data.status === "Success") setLogsList(response.data.logs);
   }
 
   return (
@@ -98,6 +126,7 @@ function AuthProvider({ children }) {
         removeDeviceFromList,
         CreateUser,
         SignOut,
+        createLogs,
       }}
     >
       {children}

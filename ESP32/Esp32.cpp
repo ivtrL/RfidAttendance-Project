@@ -1,87 +1,180 @@
 #include <SPI.h>
 #include <MFRC522.h>
 #include <WiFi.h>
-#include <ESP32MySQL.h>
+#include <MySQL_Connection.h>
+#include <MySQL_Cursor.h>
 
-// Define o pino do RST do MFRC522
-#define RST_PIN 5
-// Define os pinos do SPI para o MFRC522
-#define SS_PIN 18
-#define SDA_PIN 23
-#define SCK_PIN 19
-#define MOSI_PIN 22
-#define MISO_PIN 21
+#define SS_PIN 5
+#define RST_PIN 4
 
-// Configuração da rede WiFi
-const char* ssid = "sua-rede-wifi";
-const char* password = "sua-senha-wifi";
+// Variáveis do cartão mestre
+byte masterCardUid[] = {0x11, 0x22, 0x33, 0x44};
+bool isMasterCard = false;
+bool configMode = false;
 
-// Configuração do servidor MySQL
-const char* host = "endereco-do-host";
-const char* user = "usuario-do-banco";
-const char* passwordMySQL = "senha-do-banco";
-const char* database = "nome-do-banco";
+// Variáveis do dispositivo
+byte deviceUid[] = {0xAA, 0xBB, 0xCC, 0xDD};
+bool deviceVerified = false;
 
-// Objeto MFRC522
-MFRC522 mfrc522(SS_PIN, RST_PIN, SDA_PIN, SCK_PIN, MOSI_PIN, MISO_PIN);
+// Configurações da rede WiFi
+const char* ssid = "NomeDaRede";
+const char* password = "SenhaDaRede";
 
-// Objeto MySQL
+// Configurações do banco de dados MySQL
+IPAddress server_addr(192, 168, 1, 100);
+char user[] = "usuario";
+char password[] = "senha";
+char schema[] = "nome_do_banco";
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+WiFiClient client;
 MySQL_Connection conn((Client *)&client);
 
 void setup() {
   Serial.begin(115200);
-  SPI.begin();         // Inicializa a comunicação SPI
-  mfrc522.PCD_Init();  // Inicializa o MFRC522
+  SPI.begin();
+  mfrc522.PCD_Init();
 
-  WiFi.begin(ssid, password); // Conecta-se à rede WiFi
+  connectWiFi();
+  connectMySQL();
+
+  verifyDevice();
+}
+
+void loop() {
+  if (!deviceVerified) {
+    return;
+  }
+
+  if (!configMode) {
+    if (checkCardPresence()) {
+      Serial.println("PRESENTE");
+    } else {
+      Serial.println("NÃO PRESENTE");
+    }
+  } else {
+    if (checkMasterCard()) {
+      configMode = false;
+      Serial.println("Saindo do modo de configuração");
+    } else {
+      addCardToDatabase();
+    }
+  }
+}
+
+bool checkCardPresence() {
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    byte buffer[4];
+    MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
+
+    if (piccType == MFRC522::PICC_TYPE_MIFARE_1K) {
+      for (byte i = 0; i < 4; i++) {
+        buffer[i] = mfrc522.uid.uidByte[i];
+      }
+
+      // Verificar se o ID do cartão está na tabela "users" no campo "card_uid"
+      char query[128];
+      sprintf(query, "SELECT * FROM users WHERE card_uid = '%02x%02x%02x%02x'", buffer[0], buffer[1], buffer[2], buffer[3]);
+
+      MySQL_Cursor* cursor = new MySQL_Cursor(&conn);
+      cursor->execute(query);
+
+      if (cursor->available()) {
+        delete cursor;
+        return true;
+      }
+    }
+
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+  }
+
+  return false;
+}
+
+bool checkMasterCard() {
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    byte buffer[4];
+    MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
+
+    if (piccType == MFRC522::PICC_TYPE_MIFARE_1K) {
+      for (byte i = 0; i < 4; i++) {
+        buffer[i] = mfrc522.uid.uidByte[i];
+      }
+
+      if (memcmp(buffer, masterCardUid, 4) == 0) {
+        isMasterCard = true;
+        return true;
+      }
+    }
+
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+  }
+
+  return false;
+}
+
+void addCardToDatabase() {
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    byte buffer[4];
+    MFRC522::PICC_Type piccType = mfrc522.PICC_GetType(mfrc522.uid.sak);
+
+    if (piccType == MFRC522::PICC_TYPE_MIFARE_1K) {
+      for (byte i = 0; i < 4; i++) {
+        buffer[i] = mfrc522.uid.uidByte[i];
+      }
+
+      // Procurar pelo primeiro registro com valor 1 na coluna "add_card" e atualizar com o ID do cartão lido
+      char query[128];
+      sprintf(query, "UPDATE users SET card_uid = '%02x%02x%02x%02x', add_card = 0 WHERE add_card = 1 LIMIT 1", buffer[0], buffer[1], buffer[2], buffer[3]);
+
+      MySQL_Cursor* cursor = new MySQL_Cursor(&conn);
+      cursor->execute(query);
+      delete cursor;
+
+      Serial.println("Cartão adicionado ao banco de dados");
+    }
+
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+  }
+}
+
+void verifyDevice() {
+  // Verificar se a variável "device_uid" está presente na tabela "devices" no campo "device_uid"
+  char query[128];
+  sprintf(query, "SELECT * FROM devices WHERE device_uid = '%02x%02x%02x%02x'", deviceUid[0], deviceUid[1], deviceUid[2], deviceUid[3]);
+
+  MySQL_Cursor* cursor = new MySQL_Cursor(&conn);
+  cursor->execute(query);
+
+  if (cursor->available()) {
+    deviceVerified = true;
+  } else {
+    deviceVerified = false;
+    Serial.println("Dispositivo não verificado. O código não funcionará.");
+  }
+
+  delete cursor;
+}
+
+void connectWiFi() {
+  WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Conectando ao WiFi...");
   }
-  Serial.println("Conectado ao WiFi!");
 
-  Serial.println("Conectando ao banco de dados MySQL...");
-  if (conn.connect(host, 3306, user, passwordMySQL)) {
-    Serial.println("Conectado ao banco de dados MySQL!");
-  } else {
-    Serial.println("Falha na conexão com o banco de dados MySQL!");
-  }
+  Serial.println("Conectado ao WiFi!");
 }
 
-void loop() {
-  // Verifica se um cartão está presente
-  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-    // Lê o ID do cartão
-    String cardId = "";
-    for (byte i = 0; i < mfrc522.uid.size; i++) {
-      cardId += String(mfrc522.uid.uidByte[i] < 0x10 ? "0" : "");
-      cardId += String(mfrc522.uid.uidByte[i], HEX);
-    }
-    cardId.toUpperCase();
-    
-    // Executa a consulta SQL para verificar se o ID do cartão está na tabela
-    String query = "SELECT * FROM users WHERE id = '" + cardId + "'";
-    MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-    cur_mem->execute(query);
-    
-    // Verifica se há resultados da consulta
-    row_values *row = NULL;
-    column_names *columns = cur_mem->get_columns();
-    if (columns) {
-      while ((row = cur_mem->get_next_row()) != NULL) {
-        // ID do cartão encontrado na tabela
-        Serial.println("Cartão válido!");
-        // Realize as ações desejadas aqui
-      }
-    } else {
-      Serial.println("Cartão inválido!");
-    }
-
-    delete cur_mem;
+void connectMySQL() {
+  while (!conn.connect(server_addr, 3306, user, password)) {
+    delay(1000);
+    Serial.println("Falha na conexão com o banco de dados MySQL...");
   }
-  
-  mfrc522.PICC_HaltA();  // Encerra a comunicação com o cartão
-  mfrc522.PCD_StopCrypto1(); // Para a criptografia do cartão
-  
-  delay(1000); // Aguarda 1 segundo antes de ler novamente
+
+  Serial.println("Conectado ao banco de dados MySQL!");
+  conn.selectDB(schema);
 }
