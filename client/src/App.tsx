@@ -1,9 +1,11 @@
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+
 import Home from "./routes/Home";
 import Devices from "./routes/Devices";
 import Logs from "./routes/Logs";
 import Users from "./routes/Users";
 import Login from "./routes/Login";
-import { Routes, Route } from "react-router-dom";
 import AuthProvider from "./Auth/Auth";
 
 const App = () => {
