@@ -29,6 +29,7 @@ This project is made for Studying purposes, more especifically for a class on Un
 - Tailwind;
 - Express;
 - MySQL;
+- ESP32;
 - Some NPM libaries;
 
 
@@ -38,13 +39,24 @@ This project is made for Studying purposes, more especifically for a class on Un
 
 Node. js v14.6.0 +
 
-Install dependencies of the project:
+#INSTALLING:
+Install dependencies of the project using the command below on Terminal:
  
 ```bash
+cd client
 npm install
 ```
 
-Run the development server:
+```bash
+cd server
+npm install
+```
+
+Make sure to install dependencies on both "client" and "server" folder, 
+as the folder server runs the backend while client runs the frontend of
+the website and both has different dependencies.
+
+Then run both of the frontend and backend opening two different Terminals and using the command below:
 
 ```bash
 npm run dev
