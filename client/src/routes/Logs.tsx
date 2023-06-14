@@ -1,10 +1,13 @@
 import { useContext, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 import { AuthContext } from "../Auth/Auth";
 import Navbar from "../components/Navbar";
 import Sheet from "../components/Sheet";
+import { UserLog } from "../types";
 
 const Logs = () => {
+  const { register, handleSubmit } = useForm<UserLog>();
   const { logsList, getLogsList } = useContext(AuthContext);
   const keysList = [
     "Índice",
@@ -19,9 +22,18 @@ const Logs = () => {
   async function handleLogsList() {
     if (typeof getLogsList === "function") await getLogsList();
   }
+
   useEffect(() => {
     handleLogsList();
   }, []);
+
+  // ONLY FOR TESTING PURPOSES SAID IN AUTH.TSX
+
+  const { createLogs } = useContext(AuthContext);
+
+  async function handleCreateLogs(data: UserLog) {
+    if (typeof createLogs === "function") await createLogs(data);
+  }
 
   return (
     <div>
@@ -34,7 +46,6 @@ const Logs = () => {
       </header>
       <main>
         <div className="max-w-screen-2xl mx-auto py-6 sm:px-2">
-          {/* Replace with your content */}
           <div className="px-4 py-6 sm:px-0">
             <div className="border-4 border-dashed border-gray-200 rounded-lg h-96">
               {Array.isArray(logsList) ? (
@@ -64,7 +75,6 @@ const Logs = () => {
               )}
             </div>
           </div>
-          {/* /End replace */}
         </div>
       </main>
     </div>

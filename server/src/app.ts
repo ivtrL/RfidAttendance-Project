@@ -118,10 +118,8 @@ app.post("/login", (req, res) => {
 //   const query = "SELECT * FROM users";
 //   db.query(query, (err: mysql.MysqlError | null, data: User | User[]) => {
 //     if (err) {
-//       console.log(err);
 //       return res.json({ status: err });
 //     } else {
-//       console.log(data);
 //       return res.json({ status: "Success", users: data });
 //     }
 //   });
@@ -284,4 +282,20 @@ app.post("/devices/remove", (req, res) => {
 
 app.listen(process.env.APP_PORT, () => {
   console.log(`Connected to the port ${process.env.APP_PORT}!`);
+});
+
+// ONLY FOR SIMULATIONS OF LOGS WITHOUT DATABASE OR ESP32
+
+app.post("/logs/create", (req, res) => {
+  const newDate = new Date();
+  logsList.push({
+    id: logsList.length + 1,
+    username: req.body.username,
+    card_uid: req.body.card_uid,
+    device_uid: req.body.device_uid,
+    checkindate: `${newDate.toUTCString()}`,
+    timein: req.body.timein,
+    timeout: req.body.timeout,
+  });
+  return res.json({ status: "Success", logs: logsList });
 });

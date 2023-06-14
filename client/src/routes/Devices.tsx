@@ -69,7 +69,6 @@ const Devices = () => {
               </button>
             </div>
           </form>
-          {/* Replace with your content */}
           <div className="w-4/5 px-0 py-6 sm:px-4">
             <div className="border-4 border-dashed border-gray-200 rounded-lg h-96">
               {Array.isArray(devicesList) ? (
@@ -105,7 +104,6 @@ const Devices = () => {
               )}
             </div>
           </div>
-          {/* /End replace */}
         </div>
       </main>
     </div>

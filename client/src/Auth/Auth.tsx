@@ -18,6 +18,7 @@ interface AuthContext {
   removeDeviceFromList?: (props: { uuid: string }) => Promise<void>;
   CreateUser?: (props: User) => Promise<void>;
   SignOut?: () => Promise<void>;
+  createLogs?: (props: UserLog) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContext>({});
@@ -91,13 +92,22 @@ function AuthProvider({ children }: React.PropsWithChildren) {
   }
 
   async function removeDeviceFromList({ uuid }: { uuid: string }) {
-    const response = await axios.post(
-      "http://localhost:3333/devices/remove",
-      uuid
-    );
+    const response = await axios.post("http://localhost:3333/devices/remove", {
+      uuid,
+    });
     if (response.data.status === "Success")
       setDevicesList(response.data.devices);
     else console.log(response.data);
+  }
+
+  // FOR TESTING WITHOUT DATABASE AND ARDUINO CONNECTION
+
+  async function createLogs(data: UserLog) {
+    const response = await axios.post(
+      "http://localhost:3333/logs/create",
+      data
+    );
+    if (response.data.status === "Success") setLogsList(response.data.logs);
   }
 
   return (
@@ -116,6 +126,7 @@ function AuthProvider({ children }: React.PropsWithChildren) {
         removeDeviceFromList,
         CreateUser,
         SignOut,
+        createLogs,
       }}
     >
       {children}
