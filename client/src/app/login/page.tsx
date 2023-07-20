@@ -1,22 +1,9 @@
-import { useContext } from "react";
-import { useForm } from "react-hook-form";
-
-import { AuthContext } from "../Auth/Auth";
-import { Login as LoginType } from "../types";
-
-const Login = () => {
-  const { register, handleSubmit } = useForm<LoginType>();
-  const { SignIn } = useContext(AuthContext);
-
-  async function onSubmit(data: LoginType) {
-    if (typeof SignIn === "function") await SignIn(data);
-  }
-
+export default function Login() {
   return (
-    <div className="flex bg-[#111827] min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+    <main className="flex bg-[#111827] min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
-          className="mx-auto h-50 w-auto"
+          className="mx-auto w-auto"
           src="https://seeklogo.com/images/U/unit-universidade-tiradentes-logo-C9C42DA428-seeklogo.com.png"
           alt="UNIVERSIDADE TIRADENTES"
         />
@@ -26,12 +13,7 @@ const Login = () => {
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form
-          className="space-y-6"
-          action="#"
-          method="POST"
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="space-y-6" action="#" method="POST">
           <div>
             <label
               htmlFor="email"
@@ -41,7 +23,6 @@ const Login = () => {
             </label>
             <div className="mt-2">
               <input
-                {...register("email")}
                 id="email"
                 name="email"
                 type="email"
@@ -63,7 +44,6 @@ const Login = () => {
             </div>
             <div className="mt-2">
               <input
-                {...register("password")}
                 id="password"
                 name="password"
                 type="password"
@@ -84,8 +64,6 @@ const Login = () => {
           </div>
         </form>
       </div>
-    </div>
+    </main>
   );
-};
-
-export default Login;
+}
